@@ -289,96 +289,124 @@ const Game = () => {
           </div>
         )}
 
-        {/* Bet Type Toggle */}
-        <div className="flex gap-2 mb-6">
-          <button
-            data-testid="bet-type-color"
-            onClick={() => {
-              setBetType('color');
-              setSelectedBet(null);
-            }}
-            className="flex-1 py-3 font-bold uppercase tracking-wider transition-all"
-            style={{
-              background: betType === 'color' ? '#00FF94' : 'rgba(0, 255, 148, 0.1)',
-              color: betType === 'color' ? '#000' : '#00FF94',
-              border: '1px solid rgba(0, 255, 148, 0.3)'
-            }}
-          >
-            Bet Color
-          </button>
-          <button
-            data-testid="bet-type-number"
-            onClick={() => {
-              setBetType('number');
-              setSelectedBet(null);
-            }}
-            className="flex-1 py-3 font-bold uppercase tracking-wider transition-all"
-            style={{
-              background: betType === 'number' ? '#00FF94' : 'rgba(0, 255, 148, 0.1)',
-              color: betType === 'number' ? '#000' : '#00FF94',
-              border: '1px solid rgba(0, 255, 148, 0.3)'
-            }}
-          >
-            Bet Number
-          </button>
-        </div>
+        {/* Betting Section */}
+        <div className="glass-panel p-4 mb-4">
+          {/* Multiplier Buttons */}
+          <div className="flex gap-2 mb-4 overflow-x-auto">
+            {[1, 5, 10, 20, 50, 100].map((mult) => (
+              <button
+                key={mult}
+                data-testid={`multiplier-${mult}`}
+                onClick={() => setMultiplier(mult)}
+                className="flex-shrink-0 px-4 py-2 rounded font-bold text-sm transition-all"
+                style={{
+                  background: multiplier === mult ? '#00FF94' : 'rgba(0, 255, 148, 0.1)',
+                  color: multiplier === mult ? '#000' : '#00FF94',
+                  border: '1px solid rgba(0, 255, 148, 0.3)'
+                }}
+              >
+                x{mult}
+              </button>
+            ))}
+          </div>
 
-        {/* Betting Board */}
-        <div className="glass-panel p-6 mb-6">
-          <h3 className="text-xl font-bold mb-4" style={{ fontFamily: 'Unbounded' }}>
-            Place Your Bet
-          </h3>
-          
-          {betType === 'color' ? (
-            <div className="grid grid-cols-3 gap-4">
-              {['green', 'violet', 'red'].map((color) => (
+          {/* Big/Small Toggle */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <button
+              data-testid="bet-big"
+              onClick={() => {
+                setBetType('bigsmall');
+                setSelectedBet('big');
+              }}
+              className="py-4 rounded-lg font-bold text-lg uppercase transition-all"
+              style={{
+                background: selectedBet === 'big' && betType === 'bigsmall' ? 
+                  'linear-gradient(135deg, #FF8C00 0%, #FF6B00 100%)' : 
+                  'rgba(255, 140, 0, 0.1)',
+                color: '#FFF',
+                border: '2px solid #FF8C00'
+              }}
+            >
+              Big
+            </button>
+            <button
+              data-testid="bet-small"
+              onClick={() => {
+                setBetType('bigsmall');
+                setSelectedBet('small');
+              }}
+              className="py-4 rounded-lg font-bold text-lg uppercase transition-all"
+              style={{
+                background: selectedBet === 'small' && betType === 'bigsmall' ? 
+                  'linear-gradient(135deg, #00B4D8 0%, #0077B6 100%)' : 
+                  'rgba(0, 180, 216, 0.1)',
+                color: '#FFF',
+                border: '2px solid #00B4D8'
+              }}
+            >
+              Small
+            </button>
+          </div>
+
+          {/* Color Buttons */}
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            {['green', 'violet', 'red'].map((color) => (
+              <button
+                key={color}
+                data-testid={`bet-color-${color}`}
+                onClick={() => {
+                  setBetType('color');
+                  setSelectedBet(color);
+                }}
+                className="py-4 rounded-lg font-bold uppercase tracking-wider transition-all"
+                style={{
+                  background: selectedBet === color && betType === 'color' ? 
+                    (color === 'green' ? '#00FF94' : color === 'violet' ? '#9333EA' : '#FF0055') :
+                    (color === 'green' ? 'rgba(0, 255, 148, 0.1)' : color === 'violet' ? 'rgba(147, 51, 234, 0.1)' : 'rgba(255, 0, 85, 0.1)'),
+                  color: selectedBet === color && betType === 'color' ? (color === 'violet' ? '#FFF' : '#000') : 
+                    (color === 'green' ? '#00FF94' : color === 'violet' ? '#9333EA' : '#FF0055'),
+                  border: `2px solid ${color === 'green' ? '#00FF94' : color === 'violet' ? '#9333EA' : '#FF0055'}`
+                }}
+              >
+                <div>{color}</div>
+                <div className="text-xs mt-1">{color === 'violet' ? '4.5x' : '2x'}</div>
+              </button>
+            ))}
+          </div>
+
+          {/* Number Grid */}
+          <div className="grid grid-cols-5 gap-2 mb-4">
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => {
+              const numColor = getColorForNumber(num);
+              const bgColor = numColor.includes('green') ? '#00FF94' : numColor.includes('violet') ? '#9333EA' : '#FF0055';
+              const isSelected = selectedBet === num.toString() && betType === 'number';
+              return (
                 <button
-                  key={color}
-                  data-testid={`bet-color-${color}`}
-                  onClick={() => setSelectedBet(color)}
-                  className="py-6 font-bold uppercase tracking-wider transition-all"
+                  key={num}
+                  data-testid={`bet-number-${num}`}
+                  onClick={() => {
+                    setBetType('number');
+                    setSelectedBet(num.toString());
+                  }}
+                  className="relative aspect-square rounded-full font-bold text-2xl mono transition-all flex items-center justify-center"
                   style={{
-                    background: selectedBet === color ? 
-                      (color === 'green' ? '#00FF94' : color === 'violet' ? '#9333EA' : '#FF0055') :
-                      (color === 'green' ? 'rgba(0, 255, 148, 0.1)' : color === 'violet' ? 'rgba(147, 51, 234, 0.1)' : 'rgba(255, 0, 85, 0.1)'),
-                    color: selectedBet === color ? (color === 'violet' ? '#FFF' : '#000') : 
-                      (color === 'green' ? '#00FF94' : color === 'violet' ? '#9333EA' : '#FF0055'),
-                    border: `2px solid ${color === 'green' ? '#00FF94' : color === 'violet' ? '#9333EA' : '#FF0055'}`
+                    background: isSelected ? bgColor : `${bgColor}20`,
+                    color: isSelected ? '#000' : '#FFF',
+                    border: `3px solid ${bgColor}`,
+                    boxShadow: isSelected ? `0 0 15px ${bgColor}` : 'none'
                   }}
                 >
-                  <div>{color}</div>
-                  <div className="text-sm mt-1">{color === 'violet' ? '4.5x' : '2x'}</div>
+                  {num}
+                  <div className="absolute -bottom-1 text-[8px]" style={{ color: '#A1A1AA' }}>9x</div>
                 </button>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-5 gap-3">
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => {
-                const numColor = getColorForNumber(num);
-                const bgColor = numColor.includes('green') ? '#00FF94' : numColor.includes('violet') ? '#9333EA' : '#FF0055';
-                return (
-                  <button
-                    key={num}
-                    data-testid={`bet-number-${num}`}
-                    onClick={() => setSelectedBet(num.toString())}
-                    className="aspect-square py-4 font-bold text-2xl mono transition-all"
-                    style={{
-                      background: selectedBet === num.toString() ? bgColor : `${bgColor}20`,
-                      color: selectedBet === num.toString() ? '#000' : '#FFF',
-                      border: `2px solid ${bgColor}`
-                    }}
-                  >
-                    {num}
-                  </button>
-                );
-              })}
-            </div>
-          )}
+              );
+            })}
+          </div>
 
           {/* Bet Amount */}
-          <div className="mt-6">
-            <label className="block text-sm font-medium mb-2" style={{ color: '#A1A1AA' }}>
-              Bet Amount (Min: ₹10)
+          <div className="mb-4">
+            <label className="block text-xs font-medium mb-2" style={{ color: '#A1A1AA' }}>
+              Bet Amount × {multiplier} = ₹{(betAmount * multiplier).toFixed(2)}
             </label>
             <input
               data-testid="bet-amount-input"
@@ -401,7 +429,7 @@ const Game = () => {
             data-testid="place-bet-btn"
             onClick={placeBet}
             disabled={betting || !selectedBet}
-            className="w-full mt-6 py-4 font-bold uppercase tracking-wider transition-all skew-btn"
+            className="w-full py-4 font-bold uppercase tracking-wider transition-all skew-btn"
             style={{
               background: betting || !selectedBet ? '#555' : '#00FF94',
               color: '#000',
@@ -411,7 +439,7 @@ const Game = () => {
             }}
           >
             <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>
-              {betting ? 'Placing Bet...' : 'Place Bet'}
+              {betting ? 'Placing Bet...' : `Place Bet ₹${(betAmount * multiplier).toFixed(2)}`}
             </span>
           </button>
         </div>
