@@ -443,6 +443,75 @@ const Game = () => {
             </span>
           </button>
         </div>
+        {/* Game History Section */}
+        <div className="glass-panel p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold" style={{ fontFamily: 'Unbounded' }}>
+              Game History
+            </h3>
+            <button
+              data-testid="toggle-history-btn"
+              onClick={() => setShowHistory(!showHistory)}
+              className="text-sm px-3 py-1 rounded"
+              style={{ background: '#00FF94', color: '#000' }}
+            >
+              {showHistory ? 'Hide' : 'Show'} History
+            </button>
+          </div>
+
+          {showHistory && gameHistory.length > 0 && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                    <th className="text-left py-2 px-2" style={{ color: '#A1A1AA' }}>Period</th>
+                    <th className="text-center py-2 px-2" style={{ color: '#A1A1AA' }}>Number</th>
+                    <th className="text-center py-2 px-2" style={{ color: '#A1A1AA' }}>Big/Small</th>
+                    <th className="text-center py-2 px-2" style={{ color: '#A1A1AA' }}>Color</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {gameHistory.slice(0, 20).map((game, idx) => (
+                    <tr 
+                      key={game.id}
+                      data-testid={`history-row-${idx}`}
+                      style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                    >
+                      <td className="py-3 px-2 mono text-xs">
+                        {new Date(game.created_at).toLocaleString('en-US', { 
+                          year: 'numeric', 
+                          month: '2-digit', 
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit'
+                        }).replace(/[/:,\s]/g, '')}
+                      </td>
+                      <td className="py-3 px-2 text-center">
+                        <span 
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-full font-bold mono"
+                          style={{
+                            background: game.result_color.includes('green') ? '#00FF94' : 
+                                       game.result_color.includes('violet') ? '#9333EA' : '#FF0055',
+                            color: game.result_color.includes('violet') ? '#FFF' : '#000'
+                          }}
+                        >
+                          {game.result_number}
+                        </span>
+                      </td>
+                      <td className="py-3 px-2 text-center font-bold">
+                        {getBigSmall(game.result_number)}
+                      </td>
+                      <td className="py-3 px-2 flex justify-center">
+                        {getColorDot(game.result_color)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
