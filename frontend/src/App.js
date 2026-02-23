@@ -52,6 +52,7 @@ function AppContent() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/game/:mode" element={<ProtectedRoute><Game /></ProtectedRoute>} />
         <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
+        <Route path="/withdrawal" element={<ProtectedRoute><Withdrawal /></ProtectedRoute>} />
         <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
         <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
       </Routes>
