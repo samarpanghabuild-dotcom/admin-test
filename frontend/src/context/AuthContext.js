@@ -12,13 +12,26 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      fetchProfile();
-    } else {
+    const initAuth = async () => {
+      const storedToken = localStorage.getItem('token');
+      if (storedToken) {
+        setToken(storedToken);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+        try {
+          const response = await axios.get(`${API}/user/profile`);
+          setUser(response.data);
+        } catch (error) {
+          console.error('Failed to fetch profile:', error);
+          localStorage.removeItem('token');
+          setToken(null);
+          delete axios.defaults.headers.common['Authorization'];
+        }
+      }
       setLoading(false);
-    }
-  }, [token]);
+    };
+    
+    initAuth();
+  }, []);
 
   const fetchProfile = async () => {
     try {
