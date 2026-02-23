@@ -264,8 +264,11 @@ async def request_deposit(deposit_data: DepositRequest, user: dict = Depends(get
     deposit = Deposit(
         user_id=user['id'],
         user_email=user['email'],
+        user_name=user['name'],
         utr=deposit_data.utr,
-        amount=deposit_data.amount
+        sender_upi=deposit_data.sender_upi,
+        amount=deposit_data.amount,
+        screenshot_url=deposit_data.screenshot_url
     )
     deposit_dict = deposit.model_dump()
     deposit_dict['created_at'] = deposit_dict['created_at'].isoformat()
