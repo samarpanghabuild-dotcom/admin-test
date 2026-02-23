@@ -427,7 +427,7 @@ async def approve_deposit(deposit_id: str, admin: dict = Depends(get_admin_user)
     return {'message': 'Deposit approved', 'new_balance': new_balance}
 
 @api_router.put("/admin/deposit/{deposit_id}/reject")
-async def reject_deposit(deposit_id: str, admin: dict = Depends(get_admin_user)):
+async def reject_deposit(deposit_id: str, reason: str = "", admin: dict = Depends(get_admin_user)):
     deposit = await db.deposits.find_one({'id': deposit_id}, {'_id': 0})
     if not deposit:
         raise HTTPException(status_code=404, detail="Deposit not found")
@@ -437,7 +437,7 @@ async def reject_deposit(deposit_id: str, admin: dict = Depends(get_admin_user))
     
     await db.deposits.update_one(
         {'id': deposit_id},
-        {'$set': {'status': 'rejected'}}
+        {'$set': {'status': 'rejected', 'rejection_reason': reason}}
     )
     
     return {'message': 'Deposit rejected'}
