@@ -53,30 +53,65 @@ class User(BaseModel):
 
 class DepositRequest(BaseModel):
     utr: str
+    sender_upi: str
     amount: float
+    screenshot_url: Optional[str] = None
 
 class Deposit(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
     user_email: str
+    user_name: str
     utr: str
+    sender_upi: str
     amount: float
+    screenshot_url: Optional[str] = None
     status: str = "pending"
+    rejection_reason: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class WithdrawalRequest(BaseModel):
     amount: float
+    method: str
+    bank_name: Optional[str] = None
+    account_holder: Optional[str] = None
+    account_number: Optional[str] = None
+    ifsc_code: Optional[str] = None
+    upi_id: Optional[str] = None
+    mobile_number: str
 
 class Withdrawal(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
     user_email: str
+    user_name: str
     amount: float
+    method: str
+    bank_name: Optional[str] = None
+    account_holder: Optional[str] = None
+    account_number: Optional[str] = None
+    ifsc_code: Optional[str] = None
+    upi_id: Optional[str] = None
+    mobile_number: str
     status: str = "pending"
     wager_progress: float
+    rejection_reason: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PaymentSettings(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = "payment_settings"
+    qr_code_url: str = ""
+    upi_id: str = ""
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PlayerManagement(BaseModel):
+    user_id: str
+    action: str
+    amount: Optional[float] = None
+    reason: Optional[str] = None
 
 class BetRequest(BaseModel):
     game_mode: str
