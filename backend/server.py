@@ -171,6 +171,10 @@ def calculate_win(bet_type: str, bet_value: str, bet_amount: float, result_numbe
             return bet_amount * 2
         elif bet_value == 'violet' and 'violet' in result_color:
             return bet_amount * 4.5
+    elif bet_type == 'bigsmall':
+        is_big = result_number >= 5
+        if (bet_value == 'big' and is_big) or (bet_value == 'small' and not is_big):
+            return bet_amount * 2
     return 0
 
 # Auth routes
