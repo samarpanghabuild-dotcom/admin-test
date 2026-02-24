@@ -2,7 +2,7 @@ import requests
 import json
 
 # Test game functionality with fresh tokens
-BASE_URL = "https://quickwin-hub.preview.emergentagent.com/api"
+BASE_URL = "https://wingo-hub.preview.emergentagent.com/api"
 
 def test_game_functionality():
     print("Testing game functionality...")
