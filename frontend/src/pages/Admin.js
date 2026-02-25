@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
@@ -28,11 +28,9 @@ const Admin = () => {
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Payment settings
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [upiId, setUpiId] = useState('');
 
-  // Modals
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [rejectType, setRejectType] = useState('');
@@ -45,55 +43,59 @@ const Admin = () => {
 
   const [showDepositDetail, setShowDepositDetail] = useState(null);
 
-  // ✅ Memoized fetchData (Fixes ESLint CI error)
-  const fetchData = useCallback(async () => {
-    try {
-      if (activeTab === 'dashboard') {
-        const statsRes = await axios.get(`${API}/admin/dashboard-stats`);
-        setDashboardStats(statsRes.data);
-      } else if (activeTab === 'deposits') {
-        const depositsRes = await axios.get(`${API}/admin/deposits`);
-        setDeposits(depositsRes.data);
-      } else if (activeTab === 'withdrawals') {
-        const withdrawalsRes = await axios.get(`${API}/admin/withdrawals`);
-        setWithdrawals(withdrawalsRes.data);
-      } else if (activeTab === 'users') {
-        const usersRes = await axios.get(`${API}/admin/users`);
-        setUsers(usersRes.data);
-      } else if (activeTab === 'settings') {
-        const settingsRes = await axios.get(`${API}/admin/payment-settings`);
-        setQrCodeUrl(settingsRes.data.qr_code_url || '');
-        setUpiId(settingsRes.data.upi_id || '');
-      }
-    } catch (error) {
-      console.error('Failed to fetch admin data:', error);
-      toast.error('Failed to load data');
-    } finally {
-      setLoading(false);
-    }
-  }, [activeTab]);
-
-  // ✅ Fixed dependency array
   useEffect(() => {
-    if (user?.role !== 'admin') {
-      navigate('/');
-      return;
-    }
+    const fetchData = async () => {
+      try {
+        if (user?.role !== 'admin') {
+          navigate('/');
+          return;
+        }
+
+        if (activeTab === 'dashboard') {
+          const statsRes = await axios.get(`${API}/admin/dashboard-stats`);
+          setDashboardStats(statsRes.data);
+        } 
+        else if (activeTab === 'deposits') {
+          const depositsRes = await axios.get(`${API}/admin/deposits`);
+          setDeposits(depositsRes.data);
+        } 
+        else if (activeTab === 'withdrawals') {
+          const withdrawalsRes = await axios.get(`${API}/admin/withdrawals`);
+          setWithdrawals(withdrawalsRes.data);
+        } 
+        else if (activeTab === 'users') {
+          const usersRes = await axios.get(`${API}/admin/users`);
+          setUsers(usersRes.data);
+        } 
+        else if (activeTab === 'settings') {
+          const settingsRes = await axios.get(`${API}/admin/payment-settings`);
+          setQrCodeUrl(settingsRes.data.qr_code_url || '');
+          setUpiId(settingsRes.data.upi_id || '');
+        }
+
+      } catch (error) {
+        console.error('Failed to fetch admin data:', error);
+        toast.error('Failed to load data');
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchData();
-  }, [user, navigate, fetchData]);
+  }, [user, activeTab, navigate]);
 
- const handleSearch = async () => {
-  if (!searchQuery.trim()) return;
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
 
-  try {
-    const response = await axios.get(`${API}/admin/search-player?query=${searchQuery}`);
-    setSearchResults(response.data);
+    try {
+      const response = await axios.get(`${API}/admin/search-player?query=${searchQuery}`);
+      setSearchResults(response.data);
 
-    if (response.data.length === 0) {
-      toast.info('No players found');
+      if (response.data.length === 0) {
+        toast.info('No players found');
+      }
+
+    } catch (error) {
+      toast.error('Search failed');
     }
-  } catch (error) {
-    toast.error('Search failed');
-  }
-};
+  };
