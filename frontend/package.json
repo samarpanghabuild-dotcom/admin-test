@@ -58,7 +58,7 @@
  "scripts": {
   "start": "craco start",
   "build": "craco build",
-  "serve": "serve -s build -l $PORT",
+  "serve": "node server.js",
   "test": "craco test"
 }
   },
