@@ -104,3 +104,9 @@ const Admin = () => {
       toast.error('Search failed');
     }
   };
+return (
+  <div>Admin Panel</div>
+);
+};
+
+export default Admin;
