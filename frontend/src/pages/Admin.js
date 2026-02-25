@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { 
-  ArrowLeft, Shield, Users, TrendingUp, TrendingDown, 
+import {
+  ArrowLeft, Shield, Users, TrendingUp, TrendingDown,
   Search, Plus, Minus, Lock, Unlock, CheckCircle, XCircle,
   Upload, Settings, BarChart3, Eye
 } from 'lucide-react';
@@ -43,52 +43,57 @@ const Admin = () => {
 
   const [showDepositDetail, setShowDepositDetail] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (user?.role !== 'admin') {
-          navigate('/');
-          return;
-        }
-
-        if (activeTab === 'dashboard') {
-          const statsRes = await axios.get(`${API}/admin/dashboard-stats`);
-          setDashboardStats(statsRes.data);
-        } 
-        else if (activeTab === 'deposits') {
-          const depositsRes = await axios.get(`${API}/admin/deposits`);
-          setDeposits(depositsRes.data);
-        } 
-        else if (activeTab === 'withdrawals') {
-          const withdrawalsRes = await axios.get(`${API}/admin/withdrawals`);
-          setWithdrawals(withdrawalsRes.data);
-        } 
-        else if (activeTab === 'users') {
-          const usersRes = await axios.get(`${API}/admin/users`);
-          setUsers(usersRes.data);
-        } 
-        else if (activeTab === 'settings') {
-          const settingsRes = await axios.get(`${API}/admin/payment-settings`);
-          setQrCodeUrl(settingsRes.data.qr_code_url || '');
-          setUpiId(settingsRes.data.upi_id || '');
-        }
-
-      } catch (error) {
-        console.error('Failed to fetch admin data:', error);
-        toast.error('Failed to load data');
-      } finally {
-        setLoading(false);
+  // ✅ Keep fetchData as standalone function
+  const fetchData = async () => {
+    try {
+      if (user?.role !== 'admin') {
+        navigate('/');
+        return;
       }
-    };
 
+      if (activeTab === 'dashboard') {
+        const statsRes = await axios.get(`${API}/admin/dashboard-stats`);
+        setDashboardStats(statsRes.data);
+      } 
+      else if (activeTab === 'deposits') {
+        const depositsRes = await axios.get(`${API}/admin/deposits`);
+        setDeposits(depositsRes.data);
+      } 
+      else if (activeTab === 'withdrawals') {
+        const withdrawalsRes = await axios.get(`${API}/admin/withdrawals`);
+        setWithdrawals(withdrawalsRes.data);
+      } 
+      else if (activeTab === 'users') {
+        const usersRes = await axios.get(`${API}/admin/users`);
+        setUsers(usersRes.data);
+      } 
+      else if (activeTab === 'settings') {
+        const settingsRes = await axios.get(`${API}/admin/payment-settings`);
+        setQrCodeUrl(settingsRes.data.qr_code_url || '');
+        setUpiId(settingsRes.data.upi_id || '');
+      }
+
+    } catch (error) {
+      console.error('Failed to fetch admin data:', error);
+      toast.error('Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Clean useEffect
+  useEffect(() => {
     fetchData();
-  }, [user, activeTab, navigate]);
+  }, [user, activeTab]);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
 
     try {
-      const response = await axios.get(`${API}/admin/search-player?query=${searchQuery}`);
+      const response = await axios.get(
+        `${API}/admin/search-player?query=${searchQuery}`
+      );
+
       setSearchResults(response.data);
 
       if (response.data.length === 0) {
