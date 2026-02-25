@@ -83,17 +83,17 @@ const Admin = () => {
     fetchData();
   }, [user, navigate, fetchData]);
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
+ const handleSearch = async () => {
+  if (!searchQuery.trim()) return;
 
-    try {
-      const response = await axios.get(`${API}/admin/search-player?query=${searchQuery}`);
-      setSearchResults(response.data);
+  try {
+    const response = await axios.get(`${API}/admin/search-player?query=${searchQuery}`);
+    setSearchResults(response.data);
 
-      if (response.data.length === 0) {
-        toast.info('No players found');
-      }
-    } catch (error) {
-      toast.error('Search failed');
+    if (response.data.length === 0) {
+      toast.info('No players found');
     }
-  };
+  } catch (error) {
+    toast.error('Search failed');
+  }
+};
